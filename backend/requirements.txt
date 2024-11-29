@@ -1,0 +1,11 @@
+bs4
+requests
+pandas
+flask-jwt-extended
+werkzeug
+pymongo
+pymongo[srv]==3.12
+python-dotenv
+flask_pymongo
+flask_wtf
+flask_cors
