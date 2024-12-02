@@ -2,10 +2,16 @@ from flask import current_app
 from playwright.sync_api import sync_playwright
 import requests
 
+'''
+scrape_reviews takes in an Amazon product ASIN identifier as a string, and returns
+the first 2 pages of reviews of that product
+'''
 def scrape_reviews(asin):
+    # get first 2 pages of reviews
     page_count = 3
-    q_strings = []
-    responses = []
+    q_strings = []  # store query string for each page
+    responses = []  # store responses from each page
+    cleaned_responses = []  # storing the data we need from the responses
 
     for i in range(1, page_count):
         querystring = {"asin":asin,"country":"US","sort_by":"TOP_REVIEWS","star_rating":"ALL","verified_purchases_only":"false","images_or_videos_only":"false","current_format_only":"false","page":f"{i}"}
@@ -18,10 +24,23 @@ def scrape_reviews(asin):
 
     for q in q_strings:
         resp = requests.get(current_app.config.get("AMZN_API_URL"), headers=headers, params=q)
-        responses.append(resp.json()['data']['reviews'])
+        responses += (resp.json()['data']['reviews'])
 
-    return(responses)
+    for response in responses:
+        resp = {
+            'review_title':response['review_title'],
+            'review_comment':response['review_comment'],
+            'review_helpfulness':0 if 'helpful_vote_statement' not in response else response['helpful_vote_statement']
+        }
+        cleaned_responses.append(resp)
 
+    return(cleaned_responses)
+
+
+'''
+get_review_percentages takes in an amazon product url and returns the distribution of star
+ratings 1-5.
+'''
 def get_review_percentages(url):
     with sync_playwright() as p:
         # Launch the browser in headless mode

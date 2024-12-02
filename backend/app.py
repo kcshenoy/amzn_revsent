@@ -8,8 +8,8 @@ from flask_pymongo import PyMongo
 from flask_wtf.csrf import CSRFProtect
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from scraper import scrape_reviews
-from get_asin import get_asin, get_review_percentages
+from scraper import scrape_reviews, get_review_percentages
+from get_asin import get_asin
 import os
 
 load_dotenv('.env')
@@ -29,12 +29,19 @@ CORS(app)  # Allow cross-origin requests from React
 def analyze():
     print('running')
     data = request.json
-    print(data)
     url = data.get('url')
-    print(url)
+    response = {}
 
     asin = get_asin(url)
     stars = get_review_percentages(url)
+
+    reviews = scrape_reviews(asin)
+
+    response['stars'] = stars
+    response['reviews'] = reviews
+
+    print(reviews)
+
 
     # # Scrape and analyze
     # reviews = fetch_reviews(url)
