@@ -40,8 +40,6 @@ def analyze():
     response['stars'] = stars
     response['reviews'] = reviews
 
-    print(reviews)
-
 
     # # Scrape and analyze
     # reviews = fetch_reviews(url)
@@ -55,7 +53,7 @@ def analyze():
     #     "chartData": chart_data
     # })
 
-    return jsonify(stars)
+    return jsonify(response)
 
 
 if __name__ == '__main__':
