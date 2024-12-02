@@ -1,16 +1,18 @@
 from flask import Flask
 from flask_pymongo import PyMongo
 from auth import auth  # Blueprint for authentication
+from dotenv import load_dotenv 
 
 from flask import Flask
 from flask_pymongo import PyMongo
-from auth import auth  # Blueprint for authentication
 from flask_wtf.csrf import CSRFProtect
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from scraper import scrape_reviews
-from get_asin import get_asin
+from get_asin import get_asin, get_review_percentages
 import os
+
+load_dotenv('.env')
 
 app = Flask(__name__)
 
@@ -32,8 +34,7 @@ def analyze():
     print(url)
 
     asin = get_asin(url)
-
-    scraped = scrape_reviews(asin)
+    stars = get_review_percentages(url)
 
     # # Scrape and analyze
     # reviews = fetch_reviews(url)
@@ -47,7 +48,7 @@ def analyze():
     #     "chartData": chart_data
     # })
 
-    return jsonify(scraped)
+    return jsonify(stars)
 
 
 if __name__ == '__main__':

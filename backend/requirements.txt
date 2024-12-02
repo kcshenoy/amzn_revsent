@@ -9,3 +9,4 @@ python-dotenv
 flask_pymongo
 flask_wtf
 flask_cors
+playwright

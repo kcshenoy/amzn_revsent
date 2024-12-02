@@ -1,3 +1,10 @@
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.chrome.options import Options
+from playwright.sync_api import sync_playwright
+
 import requests
 import re
 from bs4 import BeautifulSoup
@@ -45,6 +52,48 @@ def scrape_asin_from_html(url):
         return asin.get('value')  # Return the ASIN
     else:
         return None  # ASIN not found in the HTML
+
+
+def get_review_percentages(url):
+    with sync_playwright() as p:
+        # Launch the browser in headless mode
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
+        
+        # Navigate to the Amazon product page
+        page.goto(url, timeout=60000)  # Timeout increased to handle delays
+
+        # Extract the histogram table (review percentages section)
+        try:
+            # Wait for the review histogram table to load
+            page.wait_for_selector("#histogramTable", timeout=10000)
+
+            # Locate all review rows in the histogram table
+            star_rows = page.query_selector_all("#histogramTable li")
+
+            # Extract star ratings and percentages
+            i = 0
+            star_percentages = {}
+            for star_row in star_rows:
+                # Extract the star label (e.g., "5 star")
+                star_label = star_row.text_content().split('star')[i]
+                i += 1
+
+                # Extract the percentage (e.g., "85%")
+                percentage = star_row.query_selector("span").inner_text().splitlines()[1]
+                star_percentages[f"{star_label} star"] = percentage
+
+            return star_percentages
+
+        except Exception as e:
+            print(f"Error scraping the page: {e}")
+            return None
+
+        finally:
+            browser.close()
+
+
+
 
 # Main function to scrape ASIN
 def get_asin(url):
