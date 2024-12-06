@@ -1,4 +1,5 @@
 bs4
+flask
 requests
 pandas
 flask-jwt-extended
@@ -10,3 +11,5 @@ flask_pymongo
 flask_wtf
 flask_cors
 playwright
+torch
+transformers

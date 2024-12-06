@@ -27,10 +27,18 @@ def scrape_reviews(asin):
         responses += (resp.json()['data']['reviews'])
 
     for response in responses:
+
+        if 'helpful_vote_statement' not in response:
+            helpful = 0
+        elif response['helpful_vote_statement'].split()[0] == 'One':
+            helpful = 1
+        else:
+            helpful = int(response['helpful_vote_statement'].split()[0])
+                    
         resp = {
             'review_title':response['review_title'],
             'review_comment':response['review_comment'],
-            'review_helpfulness':0 if 'helpful_vote_statement' not in response else response['helpful_vote_statement']
+            'review_helpfulness':helpful
         }
         cleaned_responses.append(resp)
 

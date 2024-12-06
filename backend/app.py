@@ -1,6 +1,5 @@
 from flask import Flask
 from flask_pymongo import PyMongo
-from auth import auth  # Blueprint for authentication
 from dotenv import load_dotenv 
 
 from flask import Flask
@@ -21,7 +20,7 @@ app.config.from_object('config.Config')
 # print(app.config)
 
 # Initialize PyMongo to work with MongoDB
-mongo = PyMongo(app)
+# mongo = PyMongo(app)
 
 CORS(app)  # Allow cross-origin requests from React
 
@@ -39,19 +38,6 @@ def analyze():
 
     response['stars'] = stars
     response['reviews'] = reviews
-
-
-    # # Scrape and analyze
-    # reviews = fetch_reviews(url)
-    # sentiment = analyze_sentiment(reviews)
-
-    # # Prepare chart data (dummy for now)
-    # chart_data = {"1 Star": 10, "2 Star": 15, "3 Star": 25, "4 Star": 30, "5 Star": 20}
-
-    # return jsonify({
-    #     "sentiment": sentiment,
-    #     "chartData": chart_data
-    # })
 
     return jsonify(response)
 

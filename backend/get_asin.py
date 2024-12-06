@@ -1,9 +1,3 @@
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.chrome.options import Options
-
 import requests
 import re
 from bs4 import BeautifulSoup
@@ -11,16 +5,10 @@ import urllib.robotparser
 
 url = 'https://www.amazon.ca/'
 
-# Function to get and parse robots.txt
-def get_robots_txt():
-    robots_url = url + "/robots.txt"
-    response = requests.get(robots_url)
-    if response.status_code == 200:
-        return response.text
-    else:
-        return None
 
-# Function to parse robots.txt and check if scraping is allowed
+'''
+is_allowed_to_scrape takes a url, grabs the robots file and checks where url is scrapable
+'''
 def is_allowed_to_scrape(url, user_agent='*'):
     rp = urllib.robotparser.RobotFileParser()
     robots_url = url + '/robots.txt'
@@ -28,7 +16,9 @@ def is_allowed_to_scrape(url, user_agent='*'):
     rp.read()
     return rp.can_fetch(user_agent, url)
 
-# Function to extract ASIN from the URL using regex
+'''
+extract_asin_from_url takes a url and checks if it can get the amazon ASIN from the link itself
+'''
 def extract_asin_from_url(url):
     asin_match = re.search(r'/dp/([A-Za-z0-9]{10})', url)
     if asin_match:
@@ -36,7 +26,9 @@ def extract_asin_from_url(url):
     else:
         return None  # ASIN not found in the URL
 
-# Function to scrape ASIN from the HTML of the page (if URL doesn't contain it)
+'''
+scrape_asin_from_html scrapes the amazon ASIN from the website itself, returns it
+'''
 def scrape_asin_from_html(url):
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
@@ -53,7 +45,9 @@ def scrape_asin_from_html(url):
         return None  # ASIN not found in the HTML
 
 
-# Main function to scrape ASIN
+'''
+get_asin returns the ASIN given an URL
+'''
 def get_asin(url):
     # Check if scraping the URL is allowed according to robots.txt
     if not is_allowed_to_scrape(url):
