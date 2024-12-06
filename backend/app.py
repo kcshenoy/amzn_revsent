@@ -9,6 +9,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from scraper import scrape_reviews, get_review_percentages
 from get_asin import get_asin
+from preprocess import product_sentiment_score
 import os
 
 load_dotenv('.env')
@@ -34,7 +35,7 @@ def analyze():
     asin = get_asin(url)
     stars = get_review_percentages(url)
 
-    reviews = scrape_reviews(asin)
+    reviews = product_sentiment_score(scrape_reviews(asin))
 
     response['stars'] = stars
     response['reviews'] = reviews

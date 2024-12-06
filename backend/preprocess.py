@@ -25,7 +25,6 @@ def clean_text(review):
 
     return combined
 
-
 def product_sentiment_score(reviews):
     review_text = [clean_text(review) for review in reviews]
     sentiment_analyzer = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")

@@ -5,7 +5,7 @@ pandas
 flask-jwt-extended
 werkzeug
 pymongo
-pymongo[srv]==3.12
+pymongo[srv]==3.11
 python-dotenv
 flask_pymongo
 flask_wtf
@@ -13,3 +13,4 @@ flask_cors
 playwright
 torch
 transformers
+numpy<2.0
