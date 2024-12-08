@@ -31,6 +31,7 @@ def analyze():
     data = request.json
     url = data.get('url')
     response = {}
+    print(response)
 
     asin = get_asin(url)
     stars = get_review_percentages(url)
