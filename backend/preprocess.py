@@ -26,9 +26,14 @@ def clean_text(review):
     return combined
 
 def product_sentiment_score(reviews):
-    review_text = [clean_text(review) for review in reviews]
-    sentiment_analyzer = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")
-    model_sentiment = [sentiment_analyzer(review) for review in review_text]
-    return model_sentiment
+    helpfulness_scores = [int(review['review_helpfulness'])+1 for review in reviews]
+    max_helpfulness = max(helpfulness_scores) if helpfulness_scores else 1
+    normalized_helpfulness = [h/max_helpfulness for h in helpfulness_scores]
 
+    sentiment_analyzer = pipeline("sentiment-analysis", model="nlptown/bert-base-multilingual-uncased-sentiment")
+    model_sentiment = [sentiment_analyzer(clean_text(review)) for review in reviews]
+
+    weighted_sentiments = [data[0]*data[1] for data in zip(normalized_helpfulness, model_sentiment)]
+
+    return(weighted_sentiments, sum(normalized_helpfulness))
 

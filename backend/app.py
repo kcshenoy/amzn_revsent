@@ -31,15 +31,18 @@ def analyze():
     data = request.json
     url = data.get('url')
     response = {}
-    print(response)
 
     asin = get_asin(url)
     stars = get_review_percentages(url)
 
-    reviews = product_sentiment_score(scrape_reviews(asin))
+    reviews = scrape_reviews(asin)
+
+    review_scores = product_sentiment_score(reviews)
 
     response['stars'] = stars
     response['reviews'] = reviews
+    response['scores'] = review_scores[0]
+    response['product_sentiment'] = sum(review_scores[0])/review_scores[1]
 
     return jsonify(response)
 
